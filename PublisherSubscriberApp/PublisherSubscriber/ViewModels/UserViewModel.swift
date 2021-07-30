@@ -58,7 +58,6 @@ class UserViewModel: ObservableObject {
             .store(in: &cancellables)
     }
  
-    
     private func setupLoginDataTaskPublishers() {
         let totken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpdGVtcyI6W3sidXNlcm5hbWUiOiJyb2oiLCJwYXNzd29yZCI6IjEyMzQ1NiJ9XSwiaWF0IjoxNjIzOTg2ODY5fQ.Dt4_i-umcMzMDJX3OnULKgsCEr91dy7mLXNMY4FTk1A"
         let url = URL(string: "http://homenano.trueddns.com:24349/api/user")!
@@ -82,6 +81,37 @@ class UserViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
+    
+    
+    func getData() {
+        let url = URL(string: "https://jsonplaceholder.typicode.com/users")!
+        
+        URLSession.shared.dataTaskPublisher(for: url)
+        
+            .tryMap({ data, response in
+                return data
+            })
+            
+            .decode(type: [UserModel].self, decoder: JSONDecoder())
+            
+            .receive(on: DispatchQueue.main)
+            
+            .sink { completion in
+                switch completion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
+            } receiveValue: { (value) in
+                print(value)
+            }
+        
+//            .store(in: &cancellables)
+
+    }
+    
+    
 }
 
 

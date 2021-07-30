@@ -10,20 +10,30 @@ import SwiftUI
 struct HomeView: View {
     
     @StateObject var userVM = UserViewModel()
-    
+
     var body: some View {
-        VStack {
-            Text(userVM.time)
-                .padding()
-            
-            List(userVM.users) { user in
-                Text(user.name)
+        NavigationView {
+            VStack {
+                Text(userVM.time)
+                    .padding()
+                
+                List(userVM.users) { user in
+                    NavigationLink(destination: AddView()) {
+                        Text(user.name)
+                    }
+                }
+                
+                List(userVM.logins, id: \.id) { login in
+                    Text(login.username)
+                }
             }
-            
-            List(userVM.logins, id: \.id) { login in
-                Text(login.username)
-            }
+            .navigationBarTitle("Synct time", displayMode: .inline)
         }
+        .onAppear{
+            userVM.getData()
+        }
+        
+        
     }
 }
 
